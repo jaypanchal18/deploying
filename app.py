@@ -71,7 +71,7 @@ def signup():
     print("User added to MongoDB, sending email...")
 
     # Send verification email
-    verification_link = f'http://localhost:3000/verify/{verification_token}'
+    verification_link = f'https://deploying-14hj.onrender.com/verify/{verification_token}'
     msg = Message('Verify Your Email', recipients=[email])
     msg.body = f"""Hello {username},
 
