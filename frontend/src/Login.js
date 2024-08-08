@@ -67,8 +67,9 @@ function Login() {
               Don't have an account yet? <a href="/signup">Sign Up</a>
             </Typography>
             <br/>
+            <Typography  onClick={handleLogin}>
             <TextField
-              label="Email Address"
+              label="Username"
               variant="outlined"
               fullWidth
               margin="normal"
@@ -96,10 +97,11 @@ function Login() {
               variant="contained"
               className="login-button"
               fullWidth
-              onClick={handleLogin}
+             
             >
               Login
             </Button>
+            </Typography>
             <Typography variant="body2" color="textSecondary" align="center" className="login-message">
               {message}
             </Typography>
