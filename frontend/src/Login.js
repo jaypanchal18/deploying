@@ -90,10 +90,10 @@ function Login() {
             </Typography>
             <br/>
             <Button
+            type="submit"
               variant="contained"
               className="login-button"
               fullWidth
-              onClick={handleLogin}
               
             >
               Login
