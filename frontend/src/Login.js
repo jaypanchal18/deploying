@@ -34,10 +34,13 @@ function Login() {
     try {
 
       const response = await axios.post('https://deploying-14hj.onrender.com/login', { username, password });
+
       console.log(response.data);
+
       localStorage.setItem('accessToken', response.data.access_token);
+      
       setMessage('Login successful');
-      navigate('/protected');
+      navigate('/transaction');
     } catch (error) {
       console.error('Login error:', error.response || error);
       if (error.response) {
