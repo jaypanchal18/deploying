@@ -55,7 +55,14 @@ function Signup() {
   
     try {
       // Post signup data to Flask API
-      await axios.post('https://deploying-14hj.onrender.com/signup', { username, password, email, mobile });
+      await axios.post('{process.env.REACT_APP_BACKEND_API_URL}/signup', {
+        method: 'POST',
+        Headers:{
+          'Content-Type': 'application/json',
+        },
+      },
+        
+      { username, password, email, mobile });
       setMessage('Please check your email to verify your account.');
       // Optionally navigate to login page after a delay
       setTimeout(() => {
