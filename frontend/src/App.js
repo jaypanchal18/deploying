@@ -6,7 +6,6 @@ import Protected from './Protected';
 import VerifyEmail from './VerifyEmail';
 import ForgotPassword from './ForgotPassword';
 import Profile from './Profile';
-
 import Transaction from './Transaction';
 import DashboardOverview from './DashboardOverview';
 
