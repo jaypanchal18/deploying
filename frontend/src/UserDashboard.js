@@ -24,7 +24,7 @@ function Navbar() {
           </Typography>
           <div>
             <div className="desktop-nav">
-            <Button color="inherit" onClick={() => navigate('/protected')}>
+            <Button color="inherit" onClick={() => navigate('/transaction')}>
                 Dashboard
               </Button>
               <Button color="inherit" onClick={() => navigate('/profile')}>
