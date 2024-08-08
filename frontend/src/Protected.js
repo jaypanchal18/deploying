@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import Dashboard from "./UserDashboard"; // Ensure correct path for Dashboard import
+import Dashboard from "./UserDashboard";
 import { useNavigate } from "react-router-dom";
 import {
   TextField,
@@ -20,7 +20,7 @@ import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
 import VerifiedLogo from "./images/verification.jpg";
 import "./Auth.css"; // Importing the CSS file with background image styles
 
- // Update with your live API URL
+const API_URL = "https://deploying-14hj.onrender.com/api/items"; // Update with your live API URL
 
 function Protected() {
   const [message, setMessage] = useState("");
@@ -37,18 +37,22 @@ function Protected() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const apiUrl = `http://localhost:5000/api/items`; // Use the API_URL constant
 
   const fetchItems = useCallback(async () => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setItems(response.data.items);
     } catch (error) {
       setMessage("Error fetching items");
+      console.error("Error fetching items:", error.response || error);
     }
-  }, [apiUrl, token]);
+  }, [navigate, token]);
 
   const validateForm = (item) => {
     const errors = {};
@@ -71,7 +75,7 @@ function Protected() {
       return;
     }
     try {
-      await axios.post(apiUrl, newItem, {
+      await axios.post(API_URL, newItem, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Item created successfully");
@@ -86,6 +90,7 @@ function Protected() {
       fetchItems();
     } catch (error) {
       setMessage("Error creating item");
+      console.error("Error creating item:", error.response || error);
     }
   };
 
@@ -96,7 +101,7 @@ function Protected() {
       return;
     }
     try {
-      await axios.put(`${apiUrl}/${id}`, editItem, {
+      await axios.put(`${API_URL}/${id}`, editItem, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Item updated successfully");
@@ -105,18 +110,20 @@ function Protected() {
       fetchItems();
     } catch (error) {
       setMessage("Error updating item");
+      console.error("Error updating item:", error.response || error);
     }
   };
 
   const handleDeleteItem = async (id) => {
     try {
-      await axios.delete(`${apiUrl}/${id}`, {
+      await axios.delete(`${API_URL}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessage("Item deleted successfully");
       fetchItems();
     } catch (error) {
       setMessage("Error deleting item");
+      console.error("Error deleting item:", error.response || error);
     }
   };
 
@@ -328,6 +335,7 @@ function Protected() {
                             fullWidth
                             className="textfield"
                           />
+                          <br />
                           <Button
                             variant="contained"
                             color="primary"
@@ -336,22 +344,24 @@ function Protected() {
                           >
                             Update Item
                           </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => setEditItem(null)}
+                            className="button"
+                          >
+                            Cancel
+                          </Button>
                         </Box>
                       )}
                     </ListItem>
                   ))}
               </List>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleLogout}
-                className="button"
-              >
-                Logout
-              </Button>
-              <Typography color="error" className="message">
-                {message}
-              </Typography>
+              {message && (
+                <Typography variant="body1" color="error" className="message">
+                  {message}
+                </Typography>
+              )}
             </CardContent>
           </Card>
         </Container>

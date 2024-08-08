@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './UserDashboard'; 
 import Report from './DashboardOverview'
 
@@ -23,12 +23,8 @@ import {
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import './Auth.css'; // Importing CSS for styling
-
- 
-
-
 
 function Transaction() {
   // State for the transaction form
@@ -55,14 +51,10 @@ function Transaction() {
   const [error, setError] = useState(null);
   const [notification, setNotification] = useState({ message: '', severity: '' });
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  // Fetch transactions and budgets when the component mounts
-  useEffect(() => {
-    fetchData();
-  }, [navigate]);
-
-  const fetchData = async () => {
+  // Define fetchData as a useCallback to memoize it and avoid unnecessary re-renders
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
   
@@ -75,13 +67,13 @@ function Transaction() {
   
     try {
       const [transactionsResponse, budgetsResponse, budgetTrackingResponse] = await Promise.all([
-        axios.get('http://localhost:5000/transactions', {
+        axios.get('https://deploying-14hj.onrender.com/transactions', {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:5000/budgets', {
+        axios.get('https://deploying-14hj.onrender.com/budgets', {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get('http://localhost:5000/budgets/track', {
+        axios.get('https://deploying-14hj.onrender.com/budgets/track', {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -98,17 +90,21 @@ function Transaction() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Remove the unused calculateSpending function
+  // const calculateSpending = (category) => {
+  //   const totalSpent = transactions
+  //     .filter((txn) => txn.category === category)
+  //     .reduce((acc, txn) => acc + txn.amount, 0);
   
-
-  const calculateSpending = (category) => {
-    const totalSpent = transactions
-      .filter((txn) => txn.category === category)
-      .reduce((acc, txn) => acc + txn.amount, 0);
-
-    const budget = budgets.find((budg) => budg.category === category);
-    return { totalSpent, budget: budget ? budget.amount : 0 };
-  };
+  //   const budget = budgets.find((budg) => budg.category === category);
+  //   return { totalSpent, budget: budget ? budget.amount : 0 };
+  // };
 
   const checkBudgetLimit = (budgetTrackingData) => {
     // Check each budget tracking entry
@@ -122,7 +118,6 @@ function Transaction() {
       }
     });
   };
-  
 
   // Handle transaction submission
   const handleTransactionSubmit = async (e) => {
@@ -145,13 +140,13 @@ function Transaction() {
 
     try {
       if (editingTransactionId) {
-        await axios.put(`http://localhost:5000/transaction/${editingTransactionId}`, data, {
+        await axios.put(`https://deploying-14hj.onrender.com/transaction/${editingTransactionId}`, data, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotification({ message: 'Transaction updated successfully', severity: 'success' });
         setEditingTransactionId(null);
       } else {
-        await axios.post('http://localhost:5000/transaction', data, {
+        await axios.post('https://deploying-14hj.onrender.com/transaction', data, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotification({ message: 'Transaction added successfully', severity: 'success' });
@@ -192,13 +187,13 @@ function Transaction() {
 
     try {
       if (editingBudgetId) {
-        await axios.put(`http://localhost:5000/budget/${editingBudgetId}`, data, {
+        await axios.put(`https://deploying-14hj.onrender.com/budget/${editingBudgetId}`, data, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotification({ message: 'Budget updated successfully', severity: 'success' });
         setEditingBudgetId(null);
       } else {
-        await axios.post('http://localhost:5000/budget', data, {
+        await axios.post('https://deploying-14hj.onrender.com/budget', data, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setNotification({ message: 'Budget added successfully', severity: 'success' });
@@ -239,7 +234,7 @@ function Transaction() {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/transaction/${transactionId}`, {
+      await axios.delete(`https://deploying-14hj.onrender.com/transaction/${transactionId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotification({ message: 'Transaction deleted successfully', severity: 'success' });
@@ -270,7 +265,7 @@ function Transaction() {
     }
 
     try {
-      await axios.delete(`http://localhost:5000/budget/${budgetId}`, {
+      await axios.delete(`https://deploying-14hj.onrender.com/budget/${budgetId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotification({ message: 'Budget deleted successfully', severity: 'success' });
@@ -281,181 +276,172 @@ function Transaction() {
     }
   };
 
-  const handleCloseNotification = () => {
+  const handleCloseSnackbar = () => {
     setNotification({ message: '', severity: '' });
   };
 
   return (
-    <Container maxWidth="md">
+    <div>
       <Navbar />
-      <br />
-      <br />
-      <Typography variant="h4" align="center" gutterBottom>
-        Transaction & Budget Manager
-      </Typography>
-
-      <Box className="form-container">
-        <Typography variant="h6" gutterBottom>
-          {editingTransactionId ? 'Edit Transaction' : 'Add Transaction'}
+      <Container>
+        <Typography variant="h4" gutterBottom>
+          Manage Transactions and Budgets
         </Typography>
-        <form noValidate autoComplete="off" onSubmit={handleTransactionSubmit}>
-          <TextField
-            label="Type"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            select
-            SelectProps={{ native: true }}
-          >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </TextField>
-          <TextField
-            label="Amount"
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            fullWidth
-            error={!!transactionErrors.amount}
-            helperText={transactionErrors.amount}
-          />
-          <TextField
-            label="Category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            fullWidth
-            error={!!transactionErrors.category}
-            helperText={transactionErrors.category}
-          />
-          <TextField
-            label="Date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            fullWidth
-            InputLabelProps={{
-              shrink: true,
-            }}
-            error={!!transactionErrors.date}
-            helperText={transactionErrors.date}
-          />
-          <TextField
-            label="Receipt"
-            value={receipt}
-            onChange={(e) => setReceipt(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            fullWidth
-          />
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            {editingTransactionId ? 'Update Transaction' : 'Add Transaction'}
-          </Button>
-        </form>
-      </Box>
-
-      <Box mt={4}>
-        <Typography variant="h6" gutterBottom>
-          {editingBudgetId ? 'Edit Budget' : 'Add Budget'}
-        </Typography>
-        <form noValidate autoComplete="off" onSubmit={handleBudgetSubmit}>
-          <TextField
-            label="Category"
-            value={budgetCategory}
-            onChange={(e) => setBudgetCategory(e.target.value)}
-            fullWidth
-            error={!!budgetErrors.budgetCategory}
-            helperText={budgetErrors.budgetCategory}
-          />
-          <TextField
-            label="Amount"
-            type="number"
-            value={budgetAmount}
-            onChange={(e) => setBudgetAmount(e.target.value)}
-            fullWidth
-            error={!!budgetErrors.budgetAmount}
-            helperText={budgetErrors.budgetAmount}
-          />
-          <TextField
-            label="Frequency"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={budgetFrequency}
-            onChange={(e) => setBudgetFrequency(e.target.value)}
-            select
-            SelectProps={{ native: true }}
-          >
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-          </TextField>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            {editingBudgetId ? 'Update Budget' : 'Add Budget'}
-          </Button>
-        </form>
-      </Box>
-
-      <Box mt={4}>
-        <Typography variant="h6" gutterBottom>
-          Transactions
-        </Typography>
-        {loading ? (
-          <CircularProgress />
-        ) : error ? (
-          <Typography color="error">{error}</Typography>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Amount</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Receipt</TableCell>
-                  <TableCell>Note</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>{transaction.type}</TableCell>
-                    <TableCell>{transaction.amount}</TableCell>
-                    <TableCell>{transaction.category}</TableCell>
-                    <TableCell>{transaction.date}</TableCell>
-                    <TableCell>{transaction.receipt}</TableCell>
-                    <TableCell>{transaction.note}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleEditTransaction(transaction)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
+        <Box>
+          <Typography variant="h5">Add/Edit Transaction</Typography>
+          <form onSubmit={handleTransactionSubmit}>
+            <TextField
+              label="Type"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              select
+              fullWidth
+              margin="normal"
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </TextField>
+            <TextField
+              label="Amount"
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              fullWidth
+              margin="normal"
+              error={!!transactionErrors.amount}
+              helperText={transactionErrors.amount}
+            />
+            <TextField
+              label="Category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              fullWidth
+              margin="normal"
+              error={!!transactionErrors.category}
+              helperText={transactionErrors.category}
+            />
+            <TextField
+              label="Date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              fullWidth
+              margin="normal"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              error={!!transactionErrors.date}
+              helperText={transactionErrors.date}
+            />
+            <TextField
+              label="Receipt"
+              value={receipt}
+              onChange={(e) => setReceipt(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <Button type="submit" variant="contained" color="primary">
+              {editingTransactionId ? 'Update Transaction' : 'Add Transaction'}
+            </Button>
+          </form>
+        </Box>
+        <Box>
+          <Typography variant="h5">Add/Edit Budget</Typography>
+          <form onSubmit={handleBudgetSubmit}>
+            <TextField
+              label="Category"
+              value={budgetCategory}
+              onChange={(e) => setBudgetCategory(e.target.value)}
+              fullWidth
+              margin="normal"
+              error={!!budgetErrors.budgetCategory}
+              helperText={budgetErrors.budgetCategory}
+            />
+            <TextField
+              label="Amount"
+              type="number"
+              value={budgetAmount}
+              onChange={(e) => setBudgetAmount(e.target.value)}
+              fullWidth
+              margin="normal"
+              error={!!budgetErrors.budgetAmount}
+              helperText={budgetErrors.budgetAmount}
+            />
+            <TextField
+              label="Frequency"
+              value={budgetFrequency}
+              onChange={(e) => setBudgetFrequency(e.target.value)}
+              fullWidth
+              margin="normal"
+              select
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </TextField>
+            <Button type="submit" variant="contained" color="primary">
+              {editingBudgetId ? 'Update Budget' : 'Add Budget'}
+            </Button>
+          </form>
+        </Box>
+        <Box>
+          <Typography variant="h5">Transactions</Typography>
+          {loading ? (
+            <CircularProgress />
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Type</TableCell>
+                    <TableCell>Amount</TableCell>
+                    <TableCell>Category</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Receipt</TableCell>
+                    <TableCell>Note</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Box>
-
-      <Box mt={4}>
-        <Typography variant="h6" gutterBottom>
-          Budgets
-        </Typography>
-        {loading ? (
-          <CircularProgress />
-        ) : error ? (
-          <Typography color="error">{error}</Typography>
-        ) : (
+                </TableHead>
+                <TableBody>
+                  {transactions.map((transaction) => (
+                    <TableRow key={transaction.id}>
+                      <TableCell>{transaction.type}</TableCell>
+                      <TableCell>{transaction.amount}</TableCell>
+                      <TableCell>{transaction.category}</TableCell>
+                      <TableCell>{transaction.date}</TableCell>
+                      <TableCell>{transaction.receipt}</TableCell>
+                      <TableCell>{transaction.note}</TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleEditTransaction(transaction)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleDeleteTransaction(transaction.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
+        <Box>
+          <Typography variant="h5">Budgets</Typography>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -485,18 +471,19 @@ function Transaction() {
               </TableBody>
             </Table>
           </TableContainer>
-        )}
-      </Box>
-<div>
-  <Report/>
-</div>
-
-      <Snackbar open={!!notification.message} autoHideDuration={6000} onClose={handleCloseNotification}>
-        <Alert onClose={handleCloseNotification} severity={notification.severity}>
-          {notification.message}
-        </Alert>
-      </Snackbar>
-    </Container>
+        </Box>
+        <Snackbar open={!!notification.message} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+          <Alert onClose={handleCloseSnackbar} severity={notification.severity}>
+            {notification.message}
+          </Alert>
+        </Snackbar>
+      </Container>
+      <div>
+        <Report/>
+      </div>
+    </div>
+    
+  
   );
 }
 

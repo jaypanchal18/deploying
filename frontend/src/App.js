@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Switch} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import Signup from './Signup';
 import Login from './Login';
 import Protected from './Protected';
@@ -18,7 +18,7 @@ import DashboardOverview from './DashboardOverview';
 
 
 function App() {
-  const token = localStorage.getItem('token');
+  
   return (
     <Router>
       <div className="App">

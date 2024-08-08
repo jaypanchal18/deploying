@@ -56,7 +56,7 @@ function Signup() {
   
     try {
       // Post signup data to Flask API
-      await axios.post('http://localhost:5000/signup', { username, password, email, mobile });
+      await axios.post('https://deploying-14hj.onrender.com/signup', { username, password, email, mobile });
       setMessage('Please check your email to verify your account.');
       // Optionally navigate to login page after a delay
       setTimeout(() => {

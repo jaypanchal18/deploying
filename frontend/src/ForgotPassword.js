@@ -25,7 +25,7 @@ function ForgotPassword() {
     }
 
     try {
-      await axios.post(`http://localhost:5000/forgot-password`, { email });
+      await axios.post(`https://deploying-14hj.onrender.com/forgot-password`, { email });
       setStep('reset'); // Move to OTP entry step
       setMessage('OTP has been sent to your email.');
     } catch (error) {
@@ -47,7 +47,7 @@ function ForgotPassword() {
     }
 
     try {
-      await axios.post(`http://localhost:5000/reset-password`, { email, otp, password: newPassword });
+      await axios.post(`https://deploying-14hj.onrender.com/reset-password`, { email, otp, password: newPassword });
       navigate('/login'); // Redirect to login page
     } catch (error) {
       console.error('Error resetting password:', error);  // Log the error to console

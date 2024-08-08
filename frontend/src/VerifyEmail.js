@@ -12,7 +12,7 @@ function VerifyEmail() {
         const verifyEmail = async () => {
             try {
                 console.log(`Verifying email with token: ${token}`);
-                const response = await axios.get(`http://localhost:5000/verify/${token}`);
+                const response = await axios.get(`https://deploying-14hj.onrender.com/verify/${token}`);
                 if (response.status === 200) {
                     setLoading(false);
                     setVerified(true); 

@@ -18,7 +18,7 @@ function Profile() {
         const token = localStorage.getItem('accessToken');
         if (!token) throw new Error('No token found');
 
-        const response = await axios.get('http://localhost:5000/profile', {
+        const response = await axios.get('https://deploying-14hj.onrender.com/profile', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -57,7 +57,7 @@ function Profile() {
       if (!token) throw new Error('No token found');
 
       const response = await axios.put(
-        'http://localhost:5000/profile',
+        'https://deploying-14hj.onrender.com/profile',
         { username, email, mobile },
         {
           headers: {

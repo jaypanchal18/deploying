@@ -33,7 +33,7 @@ function Login() {
 
     try {
 
-      const response = await axios.post('http://localhost:5000/login', { username, password });
+      const response = await axios.post('https://deploying-14hj.onrender.com/login', { username, password });
       
       // Ensure token is correctly stored
       localStorage.setItem('accessToken', response.data.access_token);
@@ -63,7 +63,7 @@ function Login() {
     
     try {
       // Exchange tokenId with your backend or use it as needed
-      const googleResponse = await axios.post('http://localhost:5000/google-login', { tokenId });
+      const googleResponse = await axios.post('https://deploying-14hj.onrender.com/google-login', { tokenId });
 
       // Store token and other user data
       localStorage.setItem('accessToken', googleResponse.data.access_token);

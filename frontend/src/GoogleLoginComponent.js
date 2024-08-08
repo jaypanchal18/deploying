@@ -1,4 +1,3 @@
-// GoogleLoginComponent.js
 import React from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { Button } from '@mui/material';

@@ -40,7 +40,7 @@ const DashboardOverview = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/dashboard', {
+      const response = await axios.get('https://deploying-14hj.onrender.com/dashboard', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
@@ -57,7 +57,7 @@ const DashboardOverview = () => {
     setReportLoading(true);
     setReportError(null);
     try {
-      const response = await axios.get(`http://localhost:5000/report/${period}`, {
+      const response = await axios.get(`https://deploying-14hj.onrender.com/report/${period}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
         },
