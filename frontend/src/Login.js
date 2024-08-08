@@ -3,10 +3,9 @@ import { TextField, Button, Typography, Box, Grid } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css'; // Importing CSS for styling
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
+
 import loginimage from './images/login.jpg'
-import { GoogleLogin } from 'react-google-login';
+
 
 import './Auth.css';
 
@@ -52,28 +51,6 @@ function Login() {
   };
 
 
-  const handleGoogleResponse = async (response) => {
-    if (response.error) {
-      console.error('Google Login failed:', response.error);
-      setMessage('Google login failed');
-      return;
-    }
-
-    const { tokenId } = response;
-    
-    try {
-      // Exchange tokenId with your backend or use it as needed
-      const googleResponse = await axios.post('https://deploying-14hj.onrender.com/google-login', { tokenId });
-
-      // Store token and other user data
-      localStorage.setItem('accessToken', googleResponse.data.access_token);
-      setMessage('Google login successful');
-      navigate('/protected');
-    } catch (error) {
-      console.error('Error handling Google login:', error);
-      setMessage('An error occurred with Google login');
-    }
-  };
 
   return (
 
@@ -131,30 +108,17 @@ function Login() {
               or login with
             </Typography>
             <div className="login-icons">
-            <GoogleLogin
-                clientId="188656099171-j2toqn6u865c05epp4aggd8fgvm1k0oe.apps.googleusercontent.com"
-                buttonText="Login with Google"
-                onSuccess={handleGoogleResponse}
-                onFailure={handleGoogleResponse}
-                cookiePolicy={'single_host_origin'}
-                render={renderProps => (
+            
                   <Button
                     variant="outlined"
-                    startIcon={<GoogleIcon />}
-                    className="login-icon"
+                   
                     style={{ marginRight: '10px' }}
-                    onClick={renderProps.onClick}
-                    disabled={renderProps.disabled}
+                   
                   >
                     Google
-                  </Button> )}
-              />
+                  </Button>
 
-
-
-
-
-              <Button variant="outlined" startIcon={<FacebookIcon />} className="login-icon">
+              <Button variant="outlined" >
                 Facebook
               </Button>
             </div>

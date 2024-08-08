@@ -4,8 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css'; // Importing CSS for styling
 import singup from './images//signup.jpg'
-import GoogleIcon from '@mui/icons-material/Google';
-import FacebookIcon from '@mui/icons-material/Facebook';
+
 
 function Signup() {
   const [username, setUsername] = useState('');
@@ -165,11 +164,11 @@ function Signup() {
               or sign up with
             </Typography>
             <div className="login-icons">
-              <Button variant="outlined" startIcon={<GoogleIcon />} className="login-icon" style={{marginRight:'10px'}}>
+              <Button variant="outlined"className="login-icon" style={{marginRight:'10px'}}>
                 Google
               </Button>
              
-              <Button variant="outlined" startIcon={<FacebookIcon />} className="login-icon">
+              <Button variant="outlined" className="login-icon">
                 Facebook
               </Button>
             </div>
