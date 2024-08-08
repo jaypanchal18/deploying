@@ -33,12 +33,8 @@ function Login() {
     try {
 
       const response = await axios.post('https://deploying-14hj.onrender.com/login', { username, password });
-      
-      // Ensure token is correctly stored
+      console.log(response.data);
       localStorage.setItem('accessToken', response.data.access_token);
-
-     
-
       setMessage('Login successful');
       navigate('/protected');
     } catch (error) {
@@ -67,7 +63,7 @@ function Login() {
               Don't have an account yet? <a href="/signup">Sign Up</a>
             </Typography>
             <br/>
-            <Typography  onClick={handleLogin}>
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
             <TextField
               label="Username"
               variant="outlined"
@@ -97,11 +93,11 @@ function Login() {
               variant="contained"
               className="login-button"
               fullWidth
-             
+              
             >
               Login
             </Button>
-            </Typography>
+            </form>
             <Typography variant="body2" color="textSecondary" align="center" className="login-message">
               {message}
             </Typography>
