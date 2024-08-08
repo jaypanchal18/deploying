@@ -34,7 +34,7 @@ app.config['MAIL_PASSWORD'] = 'xjzi akki ibaz dmam'
 app.config['MAIL_DEFAULT_SENDER'] = 'Crud Operation''jay.nit47@gmail.com'
 mail = Mail(app)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
+CORS(app, resources={r"/*": {"origins": "https://main--webapplicationbyjay.netlify.app"}})
 
 
 
