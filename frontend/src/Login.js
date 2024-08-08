@@ -17,7 +17,8 @@ function Login() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent form submission
     setErrors({});
     setMessage('');
 
@@ -38,6 +39,7 @@ function Login() {
       setMessage('Login successful');
       navigate('/protected');
     } catch (error) {
+      console.error('Login error:', error.response || error);
       if (error.response) {
         setMessage(error.response.data.msg || 'An error occurred');
       } else {
@@ -63,7 +65,7 @@ function Login() {
               Don't have an account yet? <a href="/signup">Sign Up</a>
             </Typography>
             <br/>
-            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+            <form onSubmit={handleLogin}>
             <TextField
               label="Username"
               variant="outlined"
