@@ -14,10 +14,11 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 
+
 app = Flask(__name__)
 
 # MongoDB configuration
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/user'
+app.config['MONGO_URI'] = 'mongodb+srv://jaypanchal:crudapi@cluster0.jfbozqs.mongodb.net/user?retryWrites=true&w=majority&appName=Cluster0'
 mongo = PyMongo(app)
 
 # JWT configuration
